@@ -41,7 +41,7 @@ public class UtilsLeaves {
         for(int x = location.getBlockX() - radiusx; x <= location.getBlockX() + radiusx; x++) {
             for(int y = location.getBlockY() - radiusy; y <= location.getBlockY() + radiusy; y++) {
                 for(int z = location.getBlockZ() - radiusz; z <= location.getBlockZ() + radiusz; z++) {
-                    if(SafeRandom.randBtw(1, 6) != 1) continue;
+                    if(SafeRandom.randBtw(1, 8) != 1) continue;
                     Block block = location.getWorld().getBlockAt(x, y, z);
                     if(!FallingLeaves.leavesMaterials.contains(block.getType())) continue;
                     if(!block.getRelative(BlockFace.DOWN).getType().isAir()) continue;

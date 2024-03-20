@@ -41,7 +41,7 @@ public class FallingLeaves extends JavaPlugin {
         PDC_ISLEAF = new Pair<>(new NamespacedKey(this, "isLeaf"), PersistentDataType.BOOLEAN);
     }
 
-    public static Vector radius = new Vector(10 , 8, 10);
+    public static Vector radius = new Vector(10 , 7, 10);
 
     @Override
     public void onEnable() {
