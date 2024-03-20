@@ -2,20 +2,25 @@ package io.github.paulem.fallingleaves.leaves;
 
 import io.github.paulem.fallingleaves.FallingLeaves;
 import io.github.paulem.fallingleaves.utils.UtilsLeaves;
-import io.github.paulem.fallingleaves.utils.SafeRandom;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.persistence.PersistentDataContainer;
 
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class Leaf {
+public class FallingLeaf {
     public static final double FALL_SPEED = -0.04;
 
-    public static void createLeaf(Location spawnLocation) {
+    private final TextDisplay textDisplay;
+    private final double nextx = ThreadLocalRandom.current().nextDouble();
+    private final double nextz = ThreadLocalRandom.current().nextDouble();
+
+    public FallingLeaf(Location spawnLocation) {
         if(spawnLocation.getWorld() == null) throw new NullPointerException("Wtf bro");
 
         String col = "#" + FallingLeaves.leavesColorImpl.getColor(spawnLocation);
@@ -39,23 +44,39 @@ public class Leaf {
             color = ChatColor.of("#00610e");
         }
 
+        FallingLeaves instance = FallingLeaves.getInstance();
+
         ChatColor finalColor = color;
-        TextDisplay leaf = spawnLocation.getWorld().spawn(spawnLocation, TextDisplay.class, (display) -> {
+
+        this.textDisplay = spawnLocation.getWorld().spawn(spawnLocation, TextDisplay.class, (display) -> {
             display.setBillboard(Display.Billboard.CENTER);
 
             display.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
             display.setText(finalColor + "🍂");
             display.setBrightness(new Display.Brightness(5, 5));
 
-            double nextx = SafeRandom.generateDouble();
-            double nextz = SafeRandom.generateDouble();
-
             PersistentDataContainer pdc = display.getPersistentDataContainer();
-            pdc.set(FallingLeaves.PDC_NEXTX.first(), FallingLeaves.PDC_NEXTX.second(), nextx);
-            pdc.set(FallingLeaves.PDC_NEXTZ.first(), FallingLeaves.PDC_NEXTZ.second(), nextz);
-            pdc.set(FallingLeaves.PDC_ISLEAF.first(), FallingLeaves.PDC_ISLEAF.second(), true);
+            pdc.set(instance.PDC_ISLEAF.first(), instance.PDC_ISLEAF.second(), true);
         });
 
-        FallingLeaves.registeredLeaves.add(leaf);
+        FallingLeaves.leafList.add(this);
     }
+
+    public void tick() {
+        Location previousLocation = textDisplay.getLocation();
+        Location nextLocation = previousLocation.add(nextx/2, FALL_SPEED, nextz/2);
+
+        textDisplay.teleport(nextLocation);
+    }
+
+    // Leaf is done when it hits a block.
+    public boolean isDone() {
+        Block block = this.textDisplay.getLocation().getBlock();
+        return !block.getType().isAir();
+    }
+
+    public void remove() {
+        this.textDisplay.remove();
+    }
+
 }

@@ -29,11 +29,11 @@ public class NMSHandler {
     }
 
     @SuppressWarnings("unchecked")
-    public static ILeavesColor getLeavesColorImpl() throws RuntimeException {
+    public static LeavesColor getLeavesColorImpl() throws RuntimeException {
         String clazzName = "io.github.paulem.nms_" + getMinecraftVersion()
                 .replace(".", "_") + ".LeavesColorImpl";
         try {
-            Class<? extends ILeavesColor> clazz = (Class<? extends ILeavesColor>) Class.forName(clazzName);
+            Class<? extends LeavesColor> clazz = (Class<? extends LeavesColor>) Class.forName(clazzName);
             return clazz.getConstructor().newInstance();
         } catch (ClassNotFoundException exception) {
             throw new RuntimeException("Can't instantiate NMSHandlerImpl for version " + getMinecraftVersion() +

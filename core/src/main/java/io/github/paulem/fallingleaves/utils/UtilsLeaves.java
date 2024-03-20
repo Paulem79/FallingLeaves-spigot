@@ -2,12 +2,12 @@ package io.github.paulem.fallingleaves.utils;
 
 import io.github.paulem.fallingleaves.FallingLeaves;
 import org.bukkit.Location;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.util.Vector;
+import org.bukkit.entity.Player;
 import org.joml.Math;
 
-import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class UtilsLeaves {
     public static BufferedImage cachedFoliageImage;
@@ -30,26 +31,35 @@ public class UtilsLeaves {
         }
     }
 
-    public static @Nullable List<Block> getSomeLeaves(Location location, Vector radius) {
-        if(location.getWorld() == null) return null;
-        List<Block> blocks = new ArrayList<>();
+    // More random, but faster
+    public static List<Block> fetchViableLeafBlocks(Player player, double chance, int dx, int dy, int dz) {
+        List<Block> leafBlocks = new ArrayList<>();
+        Block baseBlock = player.getLocation().getBlock();
 
-        int radiusx = (int) radius.getX();
-        int radiusy = (int) radius.getY();
-        int radiusz = (int) radius.getZ();
+        int totalBlocks = (2 * dx + 1) * dy * (2 * dz + 1);
+        int probeBlockCount = (int) (totalBlocks * chance);
 
-        for(int x = location.getBlockX() - radiusx; x <= location.getBlockX() + radiusx; x++) {
-            for(int y = location.getBlockY() - radiusy; y <= location.getBlockY() + radiusy; y++) {
-                for(int z = location.getBlockZ() - radiusz; z <= location.getBlockZ() + radiusz; z++) {
-                    if(SafeRandom.randBtw(1, 8) != 1) continue;
-                    Block block = location.getWorld().getBlockAt(x, y, z);
-                    if(!FallingLeaves.leavesMaterials.contains(block.getType())) continue;
-                    if(!block.getRelative(BlockFace.DOWN).getType().isAir()) continue;
-                    blocks.add(block);
-                }
+        for (int i = 0; i < probeBlockCount; i++) {
+            ThreadLocalRandom random = ThreadLocalRandom.current();
+            int rx = random.nextInt(-dx, dx + 1);
+            int ry = random.nextInt(0, dy + 1);
+            int rz = random.nextInt(-dz, dz + 1);
+
+            Block probedBlock = baseBlock.getRelative(rx, ry, rz);
+            if (isViableLeafBlock(probedBlock)) {
+                leafBlocks.add(probedBlock);
             }
         }
-        return blocks;
+
+        return leafBlocks;
+    }
+
+    private static boolean isViableLeafBlock(Block block) {
+        if (!Tag.LEAVES.isTagged(block.getType())) {
+            return false;
+        }
+        Block below = block.getRelative(BlockFace.DOWN);
+        return below.getType().isAir();
     }
 
     public static Color getDefaultFoliageColor(Location location) throws IOException, ArrayIndexOutOfBoundsException {
