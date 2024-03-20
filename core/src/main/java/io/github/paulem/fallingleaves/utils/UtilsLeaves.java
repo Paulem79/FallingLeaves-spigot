@@ -4,6 +4,7 @@ import io.github.paulem.fallingleaves.FallingLeaves;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.util.Vector;
 import org.joml.Math;
 
 import javax.annotation.Nullable;
@@ -29,9 +30,14 @@ public class UtilsLeaves {
         }
     }
 
-    public static @Nullable List<Block> getSomeLeaves(Location location, int radiusx, int radiusy, int radiusz) {
+    public static @Nullable List<Block> getSomeLeaves(Location location, Vector radius) {
         if(location.getWorld() == null) return null;
         List<Block> blocks = new ArrayList<>();
+
+        int radiusx = (int) radius.getX();
+        int radiusy = (int) radius.getY();
+        int radiusz = (int) radius.getZ();
+
         for(int x = location.getBlockX() - radiusx; x <= location.getBlockX() + radiusx; x++) {
             for(int y = location.getBlockY() - radiusy; y <= location.getBlockY() + radiusy; y++) {
                 for(int z = location.getBlockZ() - radiusz; z <= location.getBlockZ() + radiusz; z++) {

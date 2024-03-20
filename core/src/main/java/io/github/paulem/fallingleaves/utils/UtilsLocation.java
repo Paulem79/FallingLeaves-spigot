@@ -1,24 +1,25 @@
 package io.github.paulem.fallingleaves.utils;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
 
-// TODO : This is not finished!
 public class UtilsLocation {
-    public static boolean canPlayersSee(Collection<? extends Player> players, Entity entity){
-        boolean canOneSee = false;
-        for(Player player : players){
-            Location playerEye = player.getEyeLocation();
-            Location target = entity.getLocation();
-            Vector vector = target.toVector().subtract(playerEye.toVector());
-            System.out.println(vector.angle(playerEye.toVector()));
+    public static boolean anyOneLookingAt(Collection<? extends Player> players, Location location) {
+        return players.stream().anyMatch(player -> isLookingInDirection(player, location));
+    }
 
-            canOneSee = vector.angle(playerEye.toVector()) > 90;
-        }
-        return canOneSee;
+    public static boolean allLookingAt(Collection<? extends Player> players, Location location) {
+        return players.stream().allMatch(player -> isLookingInDirection(player, location));
+    }
+
+    public static boolean isLookingInDirection(Player player, Location location) {
+        Location playerEyes = player.getEyeLocation();
+        Vector toEntity = location.toVector().subtract(playerEyes.toVector());
+        Vector playerDirection = playerEyes.getDirection();
+        double angle = playerDirection.angle(toEntity);
+        return angle < Math.PI / 2; // 90 degrees because 2 * PI == 360 degrees
     }
 }

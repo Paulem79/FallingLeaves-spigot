@@ -10,10 +10,7 @@ import io.github.paulem.fallingleaves.nms.NMSHandler;
 import io.github.paulem.fallingleaves.utils.Pair;
 import io.github.paulem.fallingleaves.utils.SafeRandom;
 import io.github.paulem.fallingleaves.utils.UtilsLocation;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -21,6 +18,7 @@ import org.bukkit.entity.TextDisplay;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -42,6 +40,8 @@ public class FallingLeaves extends JavaPlugin {
         PDC_NEXTZ = new Pair<>(new NamespacedKey(this, "nextz"), PersistentDataType.DOUBLE);
         PDC_ISLEAF = new Pair<>(new NamespacedKey(this, "isLeaf"), PersistentDataType.BOOLEAN);
     }
+
+    public static Vector radius = new Vector(10 , 8, 10);
 
     @Override
     public void onEnable() {
@@ -84,7 +84,7 @@ public class FallingLeaves extends JavaPlugin {
                             !player.isInWater() &&
                             !player.isInvisible()) {
 
-                        List<Block> leavesBlocks = UtilsLeaves.getSomeLeaves(player.getLocation(), 10, 5, 10);
+                        List<Block> leavesBlocks = UtilsLeaves.getSomeLeaves(player.getLocation(), radius);
                         if (leavesBlocks != null) {
                             for (Block block : leavesBlocks) {
                                 if(SafeRandom.randBtw(1, 4) != 1) continue;
@@ -92,6 +92,7 @@ public class FallingLeaves extends JavaPlugin {
 
                                 if (spawnLocation.getBlock().getType().isSolid()) continue;
                                 if (spawnLocation.getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) continue;
+                                if (!UtilsLocation.anyOneLookingAt(Bukkit.getOnlinePlayers(), spawnLocation)) continue;
 
                                 Leaf.createLeaf(spawnLocation);
                             }
@@ -123,7 +124,7 @@ public class FallingLeaves extends JavaPlugin {
                     Location nextLocation = previousLocation.add(nextx, Leaf.FALL_SPEED, nextz);
 
 
-                    if(nextLocation.getBlock().getType().isSolid()) {
+                    if(nextLocation.getBlock().getType().isSolid() || !UtilsLocation.anyOneLookingAt(Bukkit.getOnlinePlayers(), nextLocation)) {
                         leaf.remove();
                         return true;
                     }
