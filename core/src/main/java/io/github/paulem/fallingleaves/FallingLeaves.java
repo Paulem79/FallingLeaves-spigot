@@ -106,7 +106,6 @@ public class FallingLeaves extends JavaPlugin {
             @Override
             public void run() {
                 registeredLeaves.removeIf(leaf -> {
-                    // TODO : si le joueur ne voit pas la feuille, ne pas faire apparaître
                     PersistentDataContainer pdc = leaf.getPersistentDataContainer();
 
                     if(pdc.get(PDC_ISLEAF.first(), PDC_ISLEAF.second()) == null || Boolean.FALSE.equals(pdc.get(PDC_ISLEAF.first(), PDC_ISLEAF.second())))
