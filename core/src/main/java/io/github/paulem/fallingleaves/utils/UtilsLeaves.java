@@ -42,6 +42,12 @@ public class UtilsLeaves {
 
     // More random, but faster
     public static List<Block> fetchViableLeafBlocks(Player player, double chance, int dx, int dy, int dz) {
+        if(player.getNearbyEntities(dx, dy, dz).stream().filter(e -> e instanceof Player).map(e -> (Player) e).anyMatch(p -> FallingLeaves.guysSpawningLeaves.contains(p))) {
+            FallingLeaves.guysSpawningLeaves.removeIf(p -> p == player);
+            return List.of();
+        }
+        else FallingLeaves.guysSpawningLeaves.add(player);
+
         List<Block> leafBlocks = new ArrayList<>();
         Block baseBlock = player.getLocation().getBlock();
 

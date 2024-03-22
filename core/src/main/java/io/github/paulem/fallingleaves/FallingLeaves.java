@@ -25,6 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class FallingLeaves extends JavaPlugin {
     public static LeavesColor leavesColorImpl = NMSHandler.getLeavesColorImpl();
     public static final LinkedList<FallingLeaf> leafList = new LinkedList<>();
+    public static LinkedHashSet<Player> guysSpawningLeaves = new LinkedHashSet<>();
 
     private static TaskScheduler scheduler;
     private static FallingLeaves instance;
