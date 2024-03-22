@@ -21,7 +21,6 @@ import org.joml.Vector3i;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-// TODO : If a lot of players stand under the same tree, then they will turbo spawn a million leafs.
 public class FallingLeaves extends JavaPlugin {
     public static LeavesColor leavesColorImpl = NMSHandler.getLeavesColorImpl();
     public static final LinkedList<FallingLeaf> leafList = new LinkedList<>();
@@ -77,7 +76,6 @@ public class FallingLeaves extends JavaPlugin {
 
                             if (spawnLocation.getBlock().getType().isSolid()) continue;
                             if (spawnLocation.getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) continue;
-                            //if (!UtilsLocation.anyOneLookingAt(Bukkit.getOnlinePlayers(), spawnLocation)) continue;
 
                             new FallingLeaf(spawnLocation);
                         }
