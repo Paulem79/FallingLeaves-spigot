@@ -30,9 +30,7 @@ public class NMSHandler {
 
     @SuppressWarnings("unchecked")
     public static LeavesColor getLeavesColorImpl() throws RuntimeException {
-        String minecraftVersion = getMinecraftVersion();
-
-        String clazzName = "io.github.paulem.nms_" + minecraftVersion
+        String clazzName = "io.github.paulem.nms_" + getMinecraftVersion()
                 .replace(".", "_") + ".LeavesColorImpl";
         try {
             Class<? extends LeavesColor> clazz = (Class<? extends LeavesColor>) Class.forName(clazzName);
