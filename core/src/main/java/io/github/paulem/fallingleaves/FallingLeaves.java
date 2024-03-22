@@ -15,11 +15,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
+import org.joml.Vector3i;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-// TODO : You should probably have a wind strength per world. Just a 2D vector for x and z. This way all leafs fall in the same direction. The wind speed can fluctuate a bit.
 // TODO : If a lot of players stand under the same tree, then they will turbo spawn a million leafs.
 public class FallingLeaves extends JavaPlugin {
     public static LeavesColor leavesColorImpl = NMSHandler.getLeavesColorImpl();
@@ -27,6 +28,9 @@ public class FallingLeaves extends JavaPlugin {
 
     private static TaskScheduler scheduler;
     private static FallingLeaves instance;
+
+    public static final Vector WIND = new Vector(0.02, -0.04, 0.02);
+    public static final Vector3i RADIUS = new Vector3i(20 , 12, 20);
 
     {
         instance = this;
@@ -64,10 +68,11 @@ public class FallingLeaves extends JavaPlugin {
                             !player.isInWater() &&
                             !player.isInvisible()) {
 
-                        List<Block> leavesBlocks = UtilsLeaves.fetchViableLeafBlocks(player, 0.125, 10 , 7, 10);
+                        List<Block> leavesBlocks = UtilsLeaves.fetchViableLeafBlocks(player, 0.03125, RADIUS);
                         for (Block block : leavesBlocks) {
-                            if (ThreadLocalRandom.current().nextDouble() < 0.25) continue;
-                            Location spawnLocation = block.getLocation().add(ThreadLocalRandom.current().nextDouble(), FallingLeaf.FALL_SPEED, ThreadLocalRandom.current().nextDouble());
+                            Location spawnLocation = block.getLocation()
+                                    .add(WIND)
+                                    .add(new Vector(ThreadLocalRandom.current().nextDouble()/50, ThreadLocalRandom.current().nextDouble()/50, ThreadLocalRandom.current().nextDouble()/50));
 
                             if (spawnLocation.getBlock().getType().isSolid()) continue;
                             if (spawnLocation.getBlock().getRelative(BlockFace.DOWN).getType().isSolid()) continue;
