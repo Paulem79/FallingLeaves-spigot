@@ -15,10 +15,6 @@
         <module>nms_1_20_2</module>
         <module>nms_1_20_1</module>
         <module>nms_1_19_4</module>
-        <module>nms_1_19_3</module>
-        <module>nms_1_19_2</module>
-        <module>nms_1_19_1</module>
-        <module>nms_1_19</module>
     </modules>
 
     <repositories>

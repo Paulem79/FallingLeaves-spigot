@@ -76,7 +76,7 @@ public class FallingLeaf {
     // Leaf is done when it hits a block.
     public boolean isDone() {
         Block block = this.textDisplay.getLocation().getBlock();
-        return !block.getType().isAir();
+        return block.getType().isSolid();
     }
 
     public void remove() {
