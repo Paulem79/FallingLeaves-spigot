@@ -29,27 +29,27 @@ public class NMSHandler {
     }
 
     @SuppressWarnings("unchecked")
-    public static LeavesColor getLeavesColorImpl() throws RuntimeException {
+    public static Nms getNmsImpl() throws RuntimeException {
         String clazzName = "io.github.paulem.nms_" + getMinecraftVersion()
-                .replace(".", "_") + ".LeavesColorImpl";
+                .replace(".", "_") + ".NmsImpl";
         try {
-            Class<? extends LeavesColor> clazz = (Class<? extends LeavesColor>) Class.forName(clazzName);
+            Class<? extends Nms> clazz = (Class<? extends Nms>) Class.forName(clazzName);
             return clazz.getConstructor().newInstance();
         } catch (ClassNotFoundException exception) {
-            throw new RuntimeException("Can't instantiate NMSHandlerImpl for version " + getMinecraftVersion() +
+            throw new RuntimeException("Can't instantiate NmsImpl for version " + getMinecraftVersion() +
                     " (class " + clazzName + " not found. This usually means that this Minecraft version is not " +
                     "supported by this version of the plugin.)", exception);
         } catch (InvocationTargetException exception) {
-            throw new RuntimeException("Can't instantiate NMSHandlerImpl for version " + getMinecraftVersion() +
+            throw new RuntimeException("Can't instantiate NmsImpl for version " + getMinecraftVersion() +
                     " (constructor in class " + clazzName + " threw an exception)", exception);
         } catch (InstantiationException exception) {
-            throw new RuntimeException("Can't instantiate NMSHandlerImpl for version " + getMinecraftVersion() +
+            throw new RuntimeException("Can't instantiate NmsImpl for version " + getMinecraftVersion() +
                     " (class " + clazzName + " is abstract)", exception);
         } catch (IllegalAccessException exception) {
-            throw new RuntimeException("Can't instantiate NMSHandlerImpl for version " + getMinecraftVersion() +
+            throw new RuntimeException("Can't instantiate NmsImpl for version " + getMinecraftVersion() +
                     " (no-args constructor in class " + clazzName + " is not accessible)", exception);
         } catch (NoSuchMethodException exception) {
-            throw new RuntimeException("Can't instantiate NMSHandlerImpl for version " + getMinecraftVersion() +
+            throw new RuntimeException("Can't instantiate NmsImpl for version " + getMinecraftVersion() +
                     " (no no-args constructor found in class " + clazzName + ")", exception);
         }
     }

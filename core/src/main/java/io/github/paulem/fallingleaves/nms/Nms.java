@@ -2,6 +2,6 @@ package io.github.paulem.fallingleaves.nms;
 
 import org.bukkit.Location;
 
-public interface LeavesColor {
+public interface Nms {
     int getColor(Location location);
 }

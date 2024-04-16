@@ -25,7 +25,7 @@ public class FallingLeaf {
     public FallingLeaf(Location spawnLocation) {
         if(spawnLocation.getWorld() == null) throw new NullPointerException("Wtf bro");
 
-        String col = "#" + FallingLeaves.leavesColorImpl.getColor(spawnLocation);
+        String col = "#" + FallingLeaves.nmsImpl.getColor(spawnLocation);
         try {
             if (col.equals("#0")) {
                 java.awt.Color defaultFoliageColor = UtilsLeaves.getDefaultFoliageColor(spawnLocation);

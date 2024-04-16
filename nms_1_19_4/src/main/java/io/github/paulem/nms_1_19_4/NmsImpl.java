@@ -1,8 +1,9 @@
 package io.github.paulem.nms_1_19_4;
 
-import io.github.paulem.fallingleaves.nms.LeavesColor;
+import io.github.paulem.fallingleaves.nms.Nms;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.biome.Biome;
 import org.bukkit.Location;
@@ -12,7 +13,7 @@ import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock;
 
 import java.util.Optional;
 
-public class LeavesColorImpl implements LeavesColor {
+public class NmsImpl implements Nms {
     @Override
     public int getColor(Location location) {
         World bukkitWorld = location.getWorld();

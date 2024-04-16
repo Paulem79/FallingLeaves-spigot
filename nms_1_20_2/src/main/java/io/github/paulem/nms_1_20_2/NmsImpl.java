@@ -1,11 +1,11 @@
-package io.github.paulem.nms_1_20_4;
+package io.github.paulem.nms_1_20_2;
 
-import io.github.paulem.fallingleaves.nms.LeavesColor;
+import io.github.paulem.fallingleaves.nms.Nms;
 import net.minecraft.world.level.biome.Biome;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R3.block.CraftBiome;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBiome;
 
-public class LeavesColorImpl implements LeavesColor {
+public class NmsImpl implements Nms {
     @Override
     public int getColor(Location location) {
         Biome biome = CraftBiome.bukkitToMinecraft(location.getBlock().getBiome());

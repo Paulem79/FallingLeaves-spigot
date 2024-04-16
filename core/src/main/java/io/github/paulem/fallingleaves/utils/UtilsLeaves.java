@@ -57,7 +57,7 @@ public class UtilsLeaves {
         for (int i = 0; i < probeBlockCount; i++) {
             ThreadLocalRandom random = ThreadLocalRandom.current();
             int rx = random.nextInt(-dx, dx + 1);
-            int ry = random.nextInt(Tag.LEAVES.isTagged(player.getLocation().getBlock().getType()) ? -dy/2 : -dy/3, dy + 1);
+            int ry = random.nextInt(isGoodLeaf(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType()) ? -dy/2 : -dy/3, dy + 1);
             int rz = random.nextInt(-dz, dz + 1);
 
             Block probedBlock = baseBlock.getRelative(rx, ry, rz);
@@ -69,8 +69,18 @@ public class UtilsLeaves {
         return leafBlocks;
     }
 
+    private static boolean isGoodLeaf(Material material){
+        return Tag.LEAVES.isTagged(material) && isNotCherryLeaf(material);
+    }
+
+    private static boolean isNotCherryLeaf(Material material){
+        if(Version.getVersion().minor() >= 20)
+            return material != Material.CHERRY_LEAVES;
+        return true;
+    }
+
     private static boolean isViableLeafBlock(Block block) {
-        if (!Tag.LEAVES.isTagged(block.getType())) {
+        if (isGoodLeaf(block.getType())) {
             return false;
         }
         Block below = block.getRelative(BlockFace.DOWN);

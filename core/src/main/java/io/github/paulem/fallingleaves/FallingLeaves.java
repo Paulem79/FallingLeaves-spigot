@@ -4,8 +4,9 @@ import com.github.Anon8281.universalScheduler.UniversalRunnable;
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
 import io.github.paulem.fallingleaves.leaves.FallingLeaf;
+import io.github.paulem.fallingleaves.nms.NmsReflection;
 import io.github.paulem.fallingleaves.utils.UtilsLeaves;
-import io.github.paulem.fallingleaves.nms.LeavesColor;
+import io.github.paulem.fallingleaves.nms.Nms;
 import io.github.paulem.fallingleaves.nms.NMSHandler;
 import io.github.paulem.fallingleaves.utils.Pair;
 import org.bukkit.*;
@@ -22,9 +23,12 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class FallingLeaves extends JavaPlugin {
-    public static LeavesColor leavesColorImpl = NMSHandler.getLeavesColorImpl();
+    public static Nms nmsImpl = NMSHandler.getNmsImpl();
     public static final LinkedList<FallingLeaf> leafList = new LinkedList<>();
     public static LinkedHashSet<Player> guysSpawningLeaves = new LinkedHashSet<>();
+
+    private static Pair<Boolean, Double> hasAlreadyCleanedLeaves = new Pair<>(false, 21.0);
+    private static boolean shouldAlwaysClean = false;
 
     private static TaskScheduler scheduler;
     private static FallingLeaves instance;
@@ -46,18 +50,32 @@ public class FallingLeaves extends JavaPlugin {
         getLogger().info("Enabled!");
 
         getLogger().info("Cleaning existing leaves...");
-        int cleaned = 0;
-        for(World world : getServer().getWorlds()){
-            for(TextDisplay textDisplay : world.getEntitiesByClass(TextDisplay.class)){
-                if(textDisplay.getPersistentDataContainer().has(PDC_ISLEAF.first(), PDC_ISLEAF.second())){
-                    textDisplay.remove();
-                    cleaned += 1;
-                }
-            }
-        }
-        getLogger().info("Cleaned " + cleaned + " leaves!");
+        getLogger().info("Cleaned " + cleanDisplays() + " leaves!");
 
         getLogger().info("Adding tasks...");
+
+        NmsReflection reflection = new NmsReflection();
+        reflection.initReflection();
+
+        double lagTPS = 16;
+
+        getScheduler().runTaskTimer(new UniversalRunnable() {
+            @Override
+            public void run() {
+                double tps = reflection.getTPS(0);
+
+                if(!shouldAlwaysClean && hasAlreadyCleanedLeaves.first() && tps > lagTPS && hasAlreadyCleanedLeaves.second() < lagTPS){
+                    shouldAlwaysClean = true;
+                } else if(tps < lagTPS && shouldAlwaysClean){
+                    getLogger().info("Server is lagging! Cleaning existing leaves...");
+                    getLogger().info("Cleaned " + cleanDisplays() + " leaves!");
+                    hasAlreadyCleanedLeaves = new Pair<>(true, tps);
+                } else if(hasAlreadyCleanedLeaves.first() && tps > lagTPS){
+                    shouldAlwaysClean = false;
+                }
+            }
+        }, 20L*60, 20L*60);
+
         getScheduler().runTaskTimer(new UniversalRunnable() {
             @Override
             public void run() {
@@ -104,6 +122,19 @@ public class FallingLeaves extends JavaPlugin {
     @Override
     public void onDisable() {
         getLogger().info("Disabled!");
+    }
+
+    public int cleanDisplays(){
+        int cleaned = 0;
+        for(World world : getServer().getWorlds()){
+            for(TextDisplay textDisplay : world.getEntitiesByClass(TextDisplay.class)){
+                if(textDisplay.getPersistentDataContainer().has(PDC_ISLEAF.first(), PDC_ISLEAF.second())){
+                    textDisplay.remove();
+                    cleaned += 1;
+                }
+            }
+        }
+        return cleaned;
     }
 
     public static FallingLeaves getInstance() {
