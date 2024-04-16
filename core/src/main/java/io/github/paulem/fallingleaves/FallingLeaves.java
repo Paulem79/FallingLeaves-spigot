@@ -22,6 +22,7 @@ import org.joml.Vector3i;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+// TODO : Make leaves packet-based
 public class FallingLeaves extends JavaPlugin {
     public static Nms nmsImpl = NMSHandler.getNmsImpl();
     public static final LinkedList<FallingLeaf> leafList = new LinkedList<>();
