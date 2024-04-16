@@ -85,7 +85,7 @@ public class FallingLeaves extends JavaPlugin {
                             !player.isSleeping() &&
                             !player.isDead() &&
                             !player.isInWater() &&
-                            !player.isInvisible()) {
+                            !player.isInvisible() && player.getWorld().getEnvironment() == World.Environment.NORMAL) {
 
                         List<Block> leavesBlocks = UtilsLeaves.fetchViableLeafBlocks(player, 0.03125, RADIUS);
                         for (Block block : leavesBlocks) {
