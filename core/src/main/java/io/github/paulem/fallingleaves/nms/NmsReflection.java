@@ -42,7 +42,7 @@ public class NmsReflection {
 
     private Class<?> getNMSClass(String className) {
         try {
-            return Class.forName("net.minecraft.server." + version + "." + className);
+            return Class.forName("net.minecraft.server." + className);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

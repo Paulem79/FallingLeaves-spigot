@@ -17,22 +17,22 @@ import org.bukkit.entity.TextDisplay;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3i;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-// TODO : Make leaves packet-based
+// TODO : Make leaves packet-based, Bug : overspammed leaves
 public class FallingLeaves extends JavaPlugin {
     public static Nms nmsImpl = NMSHandler.getNmsImpl();
     public static final LinkedList<FallingLeaf> leafList = new LinkedList<>();
     public static LinkedHashSet<Player> guysSpawningLeaves = new LinkedHashSet<>();
 
-    private static Pair<Boolean, Double> hasAlreadyCleanedLeaves = new Pair<>(false, 21.0);
-    private static boolean shouldAlwaysClean = false;
-
     private static TaskScheduler scheduler;
     private static FallingLeaves instance;
+
+    public int cleanedTimes;
 
     public static final Vector WIND = new Vector(0.02, -0.04, 0.02);
     public static final Vector3i RADIUS = new Vector3i(20 , 12, 20);
@@ -58,24 +58,26 @@ public class FallingLeaves extends JavaPlugin {
         NmsReflection reflection = new NmsReflection();
         reflection.initReflection();
 
-        double lagTPS = 16;
+        double lagTPS = 19;
 
         getScheduler().runTaskTimer(new UniversalRunnable() {
             @Override
             public void run() {
                 double tps = reflection.getTPS(0);
 
-                if(!shouldAlwaysClean && hasAlreadyCleanedLeaves.first() && tps > lagTPS && hasAlreadyCleanedLeaves.second() < lagTPS){
-                    shouldAlwaysClean = true;
-                } else if(tps < lagTPS && shouldAlwaysClean){
+                if(cleanedTimes >= 4){
+                    getLogger().severe("Major outage! TPS is constantly falling, report this to paulem. Disabling...");
+                    cleanDisplays();
+                    setEnabled(false);
+                }
+
+                if(tps < lagTPS){
                     getLogger().info("Server is lagging! Cleaning existing leaves...");
                     getLogger().info("Cleaned " + cleanDisplays() + " leaves!");
-                    hasAlreadyCleanedLeaves = new Pair<>(true, tps);
-                } else if(hasAlreadyCleanedLeaves.first() && tps > lagTPS){
-                    shouldAlwaysClean = false;
+                    cleanedTimes += 1;
                 }
             }
-        }, 20L*60, 20L*60);
+        }, 20L*10, 20L*30);
 
         getScheduler().runTaskTimer(new UniversalRunnable() {
             @Override
