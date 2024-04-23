@@ -19,7 +19,7 @@ public class NMSHandler {
             return minecraftVersion;
         } else {
             String bukkitGetVersionOutput = Bukkit.getVersion();
-            Matcher matcher = Pattern.compile("\\(MC: (?<version>[\\d]+\\.[\\d]+(\\.[\\d]+)?)\\)").matcher(bukkitGetVersionOutput);
+            Matcher matcher = Pattern.compile("\\(MC: (?<version>\\d+\\.\\d+(\\.\\d+)?)\\)").matcher(bukkitGetVersionOutput);
             if (matcher.find()) {
                 return minecraftVersion = matcher.group("version");
             } else {
